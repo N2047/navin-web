@@ -2,12 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { useLanguage } from '../contexts/LanguageContext';
 import Lightbox from '../components/Lightbox';
 import { Image as ImageIcon, Video, Folder, Play } from 'lucide-react';
+import { initialGalleryItems } from '../data/initialData';
 
 export default function GalleryPage() {
-  const [albums, setAlbums] = useState([]);
-  const [items, setItems] = useState([]);
+  const [albums, setAlbums] = useState([
+    { id: 'all', title: 'All Media', titleNe: 'सबै मिडिया' },
+    { id: 'Conferences & Keynotes', title: 'Conferences & Keynotes', titleNe: 'सम्मेलन तथा कार्यशालाहरू' },
+    { id: 'Mentorship & Community', title: 'Mentorship & Community', titleNe: 'सामुदायिक योगदान' }
+  ]);
+  const [items, setItems] = useState(initialGalleryItems);
   const [selectedAlbum, setSelectedAlbum] = useState('all');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [activeLightboxIndex, setActiveLightboxIndex] = useState(null);
 
   const { getContent, isNepali } = useLanguage();
@@ -18,8 +23,8 @@ export default function GalleryPage() {
       fetch('/api/gallery/items').then((r) => r.json())
     ])
       .then(([albumsData, itemsData]) => {
-        if (albumsData.success) setAlbums(albumsData.albums || []);
-        if (itemsData.success) setItems(itemsData.items || []);
+        if (albumsData.success && albumsData.albums?.length) setAlbums(albumsData.albums);
+        if (itemsData.success && itemsData.items?.length) setItems(itemsData.items);
       })
       .catch((e) => console.error('Gallery fetch error:', e))
       .finally(() => setLoading(false));

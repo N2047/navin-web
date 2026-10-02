@@ -3,17 +3,18 @@ import { useLanguage } from '../contexts/LanguageContext';
 import TimelineItem from '../components/TimelineItem';
 import TextToSpeechButton from '../components/TextToSpeechButton';
 import { Briefcase } from 'lucide-react';
+import { initialExperiences } from '../data/initialData';
 
 export default function ExperiencePage() {
-  const [experiences, setExperiences] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [experiences, setExperiences] = useState(initialExperiences);
+  const [loading, setLoading] = useState(false);
   const { t, getContent, isNepali } = useLanguage();
 
   useEffect(() => {
     fetch('/api/experience')
       .then((r) => r.json())
       .then((d) => {
-        if (d.success) setExperiences(d.experiences || []);
+        if (d.success && d.experiences?.length) setExperiences(d.experiences);
       })
       .catch((e) => console.error('Experience fetch error:', e))
       .finally(() => setLoading(false));

@@ -3,18 +3,19 @@ import { useLanguage } from '../contexts/LanguageContext';
 import SkillBar from '../components/SkillBar';
 import TextToSpeechButton from '../components/TextToSpeechButton';
 import { Cpu, Layers, Sparkles } from 'lucide-react';
+import { initialSkillCategories } from '../data/initialData';
 
 export default function SkillsPage() {
-  const [categories, setCategories] = useState([]);
+  const [categories, setCategories] = useState(initialSkillCategories);
   const [activeTab, setActiveTab] = useState('all');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const { t, getContent, isNepali } = useLanguage();
 
   useEffect(() => {
     fetch('/api/skills')
       .then((r) => r.json())
       .then((d) => {
-        if (d.success) setCategories(d.categories || []);
+        if (d.success && d.categories?.length) setCategories(d.categories);
       })
       .catch((e) => console.error('Skills error:', e))
       .finally(() => setLoading(false));

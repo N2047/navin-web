@@ -15,12 +15,13 @@ import {
   BookOpen
 } from 'lucide-react';
 import { Facebook, Linkedin, Twitter, WhatsApp } from '../components/SocialIcons';
+import { initialBlogPosts } from '../data/initialData';
 
 export default function BlogPostPage() {
   const { slug } = useParams();
-  const [post, setPost] = useState(null);
-  const [relatedPosts, setRelatedPosts] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [post, setPost] = useState(() => initialBlogPosts.find((p) => p.slug === slug) || null);
+  const [relatedPosts, setRelatedPosts] = useState(() => initialBlogPosts.filter((p) => p.slug !== slug));
+  const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
 
   const { t, getContent, isNepali } = useLanguage();
@@ -28,17 +29,22 @@ export default function BlogPostPage() {
 
   useEffect(() => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
-    setLoading(true);
 
     fetch(`/api/blog/${slug}`)
       .then((r) => r.json())
       .then((d) => {
-        if (d.success) {
+        if (d.success && d.post) {
           setPost(d.post);
           setRelatedPosts(d.relatedPosts || []);
         }
       })
-      .catch((e) => console.error('Blog post fetch error:', e))
+      .catch(() => {
+        const found = initialBlogPosts.find((p) => p.slug === slug);
+        if (found) {
+          setPost(found);
+          setRelatedPosts(initialBlogPosts.filter((p) => p.slug !== slug));
+        }
+      })
       .finally(() => setLoading(false));
   }, [slug]);
 

@@ -3,10 +3,11 @@ import { useLanguage } from '../contexts/LanguageContext';
 import CertificateModal from '../components/CertificateModal';
 import TextToSpeechButton from '../components/TextToSpeechButton';
 import { Award, Eye, Calendar, Building2 } from 'lucide-react';
+import { initialAchievements } from '../data/initialData';
 
 export default function AchievementsPage() {
-  const [achievements, setAchievements] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [achievements, setAchievements] = useState(initialAchievements);
+  const [loading, setLoading] = useState(false);
   const [selectedItem, setSelectedItem] = useState(null);
   const { t, getContent, isNepali } = useLanguage();
 
@@ -14,7 +15,7 @@ export default function AchievementsPage() {
     fetch('/api/achievements')
       .then((r) => r.json())
       .then((d) => {
-        if (d.success) setAchievements(d.achievements || []);
+        if (d.success && d.achievements?.length) setAchievements(d.achievements);
       })
       .catch((e) => console.error('Achievements error:', e))
       .finally(() => setLoading(false));

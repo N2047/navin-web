@@ -3,6 +3,38 @@ import { useLanguage } from '../contexts/LanguageContext';
 import { useAccessibility } from '../contexts/AccessibilityContext';
 import { Bot, X, Send, Sparkles, Volume2, Square, RefreshCw, User } from 'lucide-react';
 
+function getOfflineReply(message, isNepali) {
+  const q = (message || '').toLowerCase();
+  if (q.includes('skill') || q.includes('stack') || q.includes('technolog') || q.includes('सीप') || q.includes('प्रविधि') || q.includes('ज्ञान')) {
+    return isNepali
+      ? 'नवीन शर्माको मुख्य प्राविधिक सीपहरूमा: Node.js, Express, React, TypeScript, PostgreSQL, Prisma, Python, Cloud Architecture (AWS/Docker), र WCAG 2.1 AAA Accessibility पर्दछन्।'
+      : 'Navin specializes in Node.js, React, TypeScript, Cloud Architecture, PostgreSQL, Prisma, Generative AI (LLMs & RAG), and WCAG 2.1 AA/AAA Accessibility.';
+  }
+  if (q.includes('project') || q.includes('काम') || q.includes('प्रोजेक्ट') || q.includes('portfolio') || q.includes('work')) {
+    return isNepali
+      ? 'प्रमुख प्रोजेक्टहरू:\n• Himalayan Health AI (टेलिमेडिसिन तथा स्वास्थ्य परामर्श)\n• NepalPay Unified Core Gateway (फिनटेक भुक्तानी स्विच)\n• Aawaj Engine (नेपाली ध्वनि तथा पहुँचयोग्यता इन्जिन)\nथप विवरण "Portfolio" पेजमा हेर्न सक्नुहुन्छ।'
+      : 'Featured Projects include:\n• Himalayan Health AI (Offline-first telemedicine)\n• NepalPay Unified Core Gateway (High-throughput fintech)\n• Aawaj Engine (Nepali TTS & Accessibility SDK)\nCheck out the "Portfolio" page for live demos!';
+  }
+  if (q.includes('experience') || q.includes('job') || q.includes('career') || q.includes('अनुभव') || q.includes('कहाँ काम')) {
+    return isNepali
+      ? 'नवीनसँग ८+ वर्षको व्यावसायिक इन्जिनियरिङ अनुभव छ। हाल उहाँ Lead Software Architect को रूपमा कार्यरत हुनुहुन्छ। विस्तृत टाइमलाइन "Experience" सेक्सनमा हेर्नुहोस्।'
+      : 'Navin has over 8+ years of software engineering experience and currently serves as Lead Software Architect. Details are available on the Experience page.';
+  }
+  if (q.includes('education') || q.includes('degree') || q.includes('अध्ययन') || q.includes('पढाइ') || q.includes('शिक्षा')) {
+    return isNepali
+      ? 'नवीनले त्रिभुवन विश्वविद्यालयबाट Computer Science & AI मा स्नातकोत्तर (M.Sc. CS) र B.Sc. CSIT मा स्नातक गरेका छन्।'
+      : 'Navin holds a Master of Science in Computer Science & AI (M.Sc. CS) and B.Sc. CSIT from Tribhuvan University with Distinction.';
+  }
+  if (q.includes('contact') || q.includes('email') || q.includes('phone') || q.includes('सम्पर्क') || q.includes('hire') || q.includes('काम दिन')) {
+    return isNepali
+      ? 'नवीनसँग सिधै सम्पर्क गर्न:\n• इमेल: contact@navinsharma.com.np\n• फोन: +977-9801234567\n• स्थान: काठमाडौँ, नेपाल\nवा "Contact" फारम भर्न सक्नुहुन्छ।'
+      : 'You can reach Navin at:\n• Email: contact@navinsharma.com.np\n• Phone: +977-9801234567\n• Location: Kathmandu, Nepal\nOr submit an inquiry via the Contact page.';
+  }
+  return isNepali
+    ? 'म नवीन शर्माको भर्चुअल एआई सहायक हुँ। तपाईं उहाँको सीप, अनुभव, शिक्षा, प्रोजेक्ट, वा सम्पर्कका बारेमा सोध्न सक्नुहुन्छ।'
+    : "I am Navin Sharma's personal AI Assistant. Feel free to ask about his skills, experience, education, portfolio projects, or how to get in touch!";
+}
+
 export default function AiChatbot() {
   const [isOpen, setIsOpen] = useState(false);
   const [input, setInput] = useState('');
@@ -56,18 +88,19 @@ export default function AiChatbot() {
       const botReply = {
         id: (Date.now() + 1).toString(),
         sender: 'bot',
-        text: data.reply || (isNepali ? 'माफ गर्नुहोस्, अहिले जवाफ प्राप्त गर्न सकिएन।' : 'Sorry, I couldn\'t process that inquiry right now.')
+        text: data.reply || getOfflineReply(text.trim(), isNepali)
       };
 
       setMessages((prev) => [...prev, botReply]);
     } catch (err) {
-      console.error('Chat error:', err);
+      // Graceful offline heuristic response
+      const fallbackText = getOfflineReply(text.trim(), isNepali);
       setMessages((prev) => [
         ...prev,
         {
           id: (Date.now() + 1).toString(),
           sender: 'bot',
-          text: isNepali ? 'सर्भरसँग सम्पर्क हुन सकेन।' : 'Connection error. Please try again.'
+          text: fallbackText
         }
       ]);
     } finally {

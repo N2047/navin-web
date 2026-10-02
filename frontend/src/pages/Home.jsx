@@ -21,13 +21,23 @@ import {
   Mail
 } from 'lucide-react';
 
+import {
+  initialProfile,
+  initialProjects,
+  initialSkillCategories,
+  initialAchievements,
+  initialBlogPosts
+} from '../data/initialData';
+
 export default function Home() {
   const { profile: layoutProfile, socialLinks } = useOutletContext() || {};
-  const [profile, setProfile] = useState(layoutProfile || null);
-  const [featuredProjects, setFeaturedProjects] = useState([]);
-  const [featuredSkills, setFeaturedSkills] = useState([]);
-  const [recentAchievements, setRecentAchievements] = useState([]);
-  const [latestBlogs, setLatestBlogs] = useState([]);
+  const [profile, setProfile] = useState(layoutProfile || initialProfile);
+  const [featuredProjects, setFeaturedProjects] = useState(initialProjects.slice(0, 3));
+  const [featuredSkills, setFeaturedSkills] = useState(
+    initialSkillCategories.flatMap((c) => c.skills).filter((s) => s.isFeatured).slice(0, 6)
+  );
+  const [recentAchievements, setRecentAchievements] = useState(initialAchievements.slice(0, 3));
+  const [latestBlogs, setLatestBlogs] = useState(initialBlogPosts.slice(0, 3));
   const [selectedProject, setSelectedProject] = useState(null);
   const [selectedAchievement, setSelectedAchievement] = useState(null);
 

@@ -16,9 +16,11 @@ import {
   Briefcase
 } from 'lucide-react';
 
+import { initialProfile } from '../data/initialData';
+
 export default function About() {
   const { profile: layoutProfile } = useOutletContext() || {};
-  const [profile, setProfile] = useState(layoutProfile || null);
+  const [profile, setProfile] = useState(layoutProfile || initialProfile);
   const { t, getContent, isNepali } = useLanguage();
   const toast = useToast();
 

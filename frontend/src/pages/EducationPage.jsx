@@ -4,10 +4,11 @@ import TimelineItem from '../components/TimelineItem';
 import CertificateModal from '../components/CertificateModal';
 import TextToSpeechButton from '../components/TextToSpeechButton';
 import { GraduationCap } from 'lucide-react';
+import { initialEducation } from '../data/initialData';
 
 export default function EducationPage() {
-  const [educations, setEducations] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [educations, setEducations] = useState(initialEducation);
+  const [loading, setLoading] = useState(false);
   const [selectedCert, setSelectedCert] = useState(null);
   const { t, getContent, isNepali } = useLanguage();
 
@@ -15,7 +16,7 @@ export default function EducationPage() {
     fetch('/api/education')
       .then((r) => r.json())
       .then((d) => {
-        if (d.success) setEducations(d.educations || []);
+        if (d.success && d.educations?.length) setEducations(d.educations);
       })
       .catch((e) => console.error('Education fetch error:', e))
       .finally(() => setLoading(false));

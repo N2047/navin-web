@@ -4,21 +4,24 @@ import Navbar from '../components/Navbar';
 import Footer from '../components/Footer';
 import SkipToContent from '../components/SkipToContent';
 import AiChatbot from '../components/AiChatbot';
+import { initialProfile, initialSocialLinks } from '../data/initialData';
 
 export default function MainLayout() {
-  const [profile, setProfile] = useState(null);
-  const [socialLinks, setSocialLinks] = useState([]);
+  const [profile, setProfile] = useState(initialProfile);
+  const [socialLinks, setSocialLinks] = useState(initialSocialLinks);
 
   useEffect(() => {
     fetch('/api/profile')
       .then((res) => res.json())
       .then((data) => {
-        if (data.success) {
+        if (data.success && data.profile) {
           setProfile(data.profile);
-          setSocialLinks(data.socialLinks || []);
+          setSocialLinks(data.socialLinks?.length ? data.socialLinks : initialSocialLinks);
         }
       })
-      .catch((err) => console.error('Error fetching layout profile:', err));
+      .catch(() => {
+        // Fallback to initialProfile if API is not hosted/reachable
+      });
   }, []);
 
   return (

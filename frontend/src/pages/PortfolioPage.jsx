@@ -4,12 +4,13 @@ import ProjectCard from '../components/ProjectCard';
 import Lightbox from '../components/Lightbox';
 import { FolderGit2, Search, ExternalLink, Calendar, Layers, X, Eye } from 'lucide-react';
 import { Github } from '../components/SocialIcons';
+import { initialProjects } from '../data/initialData';
 
 export default function PortfolioPage() {
-  const [projects, setProjects] = useState([]);
+  const [projects, setProjects] = useState(initialProjects);
   const [category, setCategory] = useState('All');
   const [searchTerm, setSearchTerm] = useState('');
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [selectedProject, setSelectedProject] = useState(null);
   const [lightboxImage, setLightboxImage] = useState(null);
 
@@ -19,7 +20,7 @@ export default function PortfolioPage() {
     fetch('/api/portfolio')
       .then((r) => r.json())
       .then((d) => {
-        if (d.success) setProjects(d.projects || []);
+        if (d.success && d.projects?.length) setProjects(d.projects);
       })
       .catch((e) => console.error('Portfolio error:', e))
       .finally(() => setLoading(false));

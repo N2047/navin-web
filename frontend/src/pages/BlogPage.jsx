@@ -2,15 +2,16 @@ import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import { BookOpen, Search, Calendar, Clock, ArrowRight, User } from 'lucide-react';
+import { initialBlogPosts } from '../data/initialData';
 
 export default function BlogPage() {
-  const [posts, setPosts] = useState([]);
-  const [categories, setCategories] = useState([]);
+  const [posts, setPosts] = useState(initialBlogPosts);
+  const [categories, setCategories] = useState(['All', 'Software Architecture', 'Accessibility & UX']);
   const [selectedCategory, setSelectedCategory] = useState('All');
   const [search, setSearch] = useState('');
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
 
   const { t, getContent, isNepali } = useLanguage();
 
