@@ -8,17 +8,17 @@ async function main() {
 
   // 1. Admin User
   const salt = await bcrypt.genSalt(10);
-  const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD || 'Admin@12345', salt);
-  const adminEmail = process.env.ADMIN_EMAIL || 'admin@example.com';
+  const passwordHash = await bcrypt.hash(process.env.ADMIN_PASSWORD || 'N@bin2047', salt);
+  const adminEmail = process.env.ADMIN_EMAIL || 'ndhungel47@gmail.com';
 
   await prisma.admin.upsert({
     where: { email: adminEmail },
-    update: { passwordHash },
+    update: { passwordHash, name: 'Navin Dhungel' },
     create: {
       email: adminEmail,
       username: 'navin_admin',
       passwordHash,
-      name: 'Navin Sharma',
+      name: 'Navin Dhungel',
       role: 'superadmin'
     }
   });
