@@ -1,0 +1,261 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Admin {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  username     String   @unique
+  passwordHash String
+  name         String
+  role         String   @default("admin")
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+}
+
+model Profile {
+  id                 String   @id @default(uuid())
+  fullName           String
+  fullNameNe         String?
+  professionalTitle   String
+  professionalTitleNe String?
+  tagline            String
+  taglineNe          String?
+  shortBio           String
+  shortBioNe         String?
+  detailedBio        String
+  detailedBioNe      String?
+  journey            String?
+  journeyNe          String?
+  careerObjective    String?
+  careerObjectiveNe  String?
+  areasOfExpertise   String?  // JSON string or comma-separated
+  profilePhoto       String?
+  heroImage          String?
+  email              String
+  phone              String?
+  location           String?
+  locationNe         String?
+  cvUrl              String?
+  cvFileName         String?
+  cvDownloadCount    Int      @default(0)
+  projectsCompleted  Int      @default(25)
+  yearsExperience    Int      @default(8)
+  trainingsCount     Int      @default(15)
+  achievementsCount  Int      @default(12)
+  updatedAt          DateTime @updatedAt
+}
+
+model SocialLink {
+  id        String   @id @default(uuid())
+  platform  String
+  url       String
+  icon      String?
+  order     Int      @default(0)
+  isVisible Boolean  @default(true)
+  createdAt DateTime @default(now())
+}
+
+model SkillCategory {
+  id        String   @id @default(uuid())
+  name      String
+  nameNe    String?
+  slug      String   @unique
+  order     Int      @default(0)
+  createdAt DateTime @default(now())
+  skills    Skill[]
+}
+
+model Skill {
+  id          String         @id @default(uuid())
+  name        String
+  nameNe      String?
+  categoryId  String
+  category    SkillCategory  @relation(fields: [categoryId], references: [id], onDelete: Cascade)
+  level       String         @default("Expert") // Beginner, Intermediate, Advanced, Expert
+  percentage  Int            @default(90)
+  icon        String?
+  order       Int            @default(0)
+  isFeatured  Boolean        @default(false)
+  createdAt   DateTime       @default(now())
+}
+
+model Portfolio {
+  id             String    @id @default(uuid())
+  title          String
+  titleNe        String?
+  slug           String    @unique
+  category       String
+  shortDesc      String
+  shortDescNe    String?
+  description    String
+  descriptionNe  String?
+  thumbnail      String?
+  galleryImages  String?   // JSON array of strings
+  technologies   String    // JSON array of strings
+  projectUrl     String?
+  githubUrl      String?
+  videoUrl       String?
+  client         String?
+  completionDate String?
+  isFeatured     Boolean   @default(false)
+  order          Int       @default(0)
+  viewsCount     Int       @default(0)
+  createdAt      DateTime  @default(now())
+  updatedAt      DateTime  @updatedAt
+}
+
+model Experience {
+  id               String   @id @default(uuid())
+  organization     String
+  organizationNe   String?
+  position         String
+  positionNe       String?
+  location         String?
+  locationNe       String?
+  startDate        String
+  endDate          String?
+  isCurrent        Boolean  @default(false)
+  responsibilities String?  // JSON array or markdown
+  responsibilitiesNe String?
+  achievements     String?  // JSON array or markdown
+  achievementsNe   String?
+  logo             String?
+  order            Int      @default(0)
+  createdAt        DateTime @default(now())
+}
+
+model Education {
+  id             String   @id @default(uuid())
+  institution    String
+  institutionNe  String?
+  degree         String
+  degreeNe       String?
+  fieldOfStudy   String
+  fieldOfStudyNe String?
+  startYear      String
+  endYear        String?
+  description    String?
+  descriptionNe  String?
+  certificateUrl String?
+  logo           String?
+  order          Int      @default(0)
+  createdAt      DateTime @default(now())
+}
+
+model Achievement {
+  id             String   @id @default(uuid())
+  title          String
+  titleNe        String?
+  organization   String
+  organizationNe String?
+  date           String
+  description    String?
+  descriptionNe  String?
+  certificateUrl String?
+  isFeatured     Boolean  @default(false)
+  order          Int      @default(0)
+  createdAt      DateTime @default(now())
+}
+
+model BlogPost {
+  id            String    @id @default(uuid())
+  title         String
+  titleNe       String?
+  slug          String    @unique
+  excerpt       String
+  excerptNe     String?
+  content       String    // Markdown or HTML
+  contentNe     String?
+  featuredImage String?
+  category      String
+  tags          String?   // JSON array of strings
+  readingTime   String    @default("5 min read")
+  viewsCount    Int       @default(0)
+  isFeatured    Boolean   @default(false)
+  isPublished   Boolean   @default(true)
+  publishedAt   DateTime  @default(now())
+  author        String    @default("Admin")
+  createdAt     DateTime  @default(now())
+  updatedAt     DateTime  @updatedAt
+}
+
+model GalleryAlbum {
+  id            String        @id @default(uuid())
+  title         String
+  titleNe       String?
+  slug          String        @unique
+  description   String?
+  descriptionNe String?
+  coverImage    String?
+  order         Int           @default(0)
+  createdAt     DateTime      @default(now())
+  items         GalleryItem[]
+}
+
+model GalleryItem {
+  id           String        @id @default(uuid())
+  albumId      String?
+  album        GalleryAlbum? @relation(fields: [albumId], references: [id], onDelete: SetNull)
+  title        String
+  titleNe      String?
+  type         String        @default("photo") // photo or video
+  mediaUrl     String
+  thumbnailUrl String?
+  caption      String?
+  captionNe    String?
+  order        Int           @default(0)
+  createdAt    DateTime      @default(now())
+}
+
+model ContactMessage {
+  id            String   @id @default(uuid())
+  name          String
+  email         String
+  phone         String?
+  subject       String
+  message       String
+  attachmentUrl String?
+  isRead        Boolean  @default(false)
+  isReplied     Boolean  @default(false)
+  replyNotes    String?
+  ipAddress     String?
+  createdAt     DateTime @default(now())
+}
+
+model Media {
+  id           String   @id @default(uuid())
+  fileName     String
+  originalName String
+  mimeType     String
+  size         Int
+  url          String
+  path         String
+  createdAt    DateTime @default(now())
+}
+
+model SiteSetting {
+  id        String   @id @default(uuid())
+  key       String   @unique
+  value     String
+  type      String   @default("text") // text, json, boolean, number
+  updatedAt DateTime @updatedAt
+}
+
+model VisitorAnalytics {
+  id         String   @id @default(uuid())
+  path       String
+  ipHash     String?
+  userAgent  String?
+  deviceType String?  // Desktop, Mobile, Tablet
+  browser    String?
+  os         String?
+  country    String?
+  referrer   String?
+  visitedAt  DateTime @default(now())
+}
