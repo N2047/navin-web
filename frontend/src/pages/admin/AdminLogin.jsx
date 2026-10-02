@@ -26,28 +26,56 @@ export default function AdminLogin() {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ identifier, password })
       });
-      const data = await res.json();
-
-      if (data.success && data.token) {
-        login(data.token, data.admin);
-        toast.success('Authenticated successfully. Welcome back!');
-        navigate('/admin');
-      } else {
-        setErrorMsg(data.message || 'Invalid credentials.');
-        toast.error(data.message || 'Invalid credentials.');
+      
+      if (res.ok) {
+        const data = await res.json();
+        if (data.success && data.token) {
+          login(data.token, data.admin);
+          toast.success('Authenticated successfully. Welcome back, Navin!');
+          navigate('/admin');
+          return;
+        } else {
+          setErrorMsg(data.message || 'Invalid credentials.');
+          toast.error(data.message || 'Invalid credentials.');
+          return;
+        }
       }
     } catch (err) {
-      setErrorMsg('Server connection failed. Please check backend.');
-      toast.error('Server connection error.');
-    } finally {
-      setLoading(false);
+      // Fallback for static hosting (e.g. InfinityFree)
     }
+
+    // Static / Offline Authentication Verification
+    const cleanId = (identifier || '').trim().toLowerCase();
+    const cleanPass = (password || '').trim();
+
+    const isMatch =
+      (cleanId === 'ndhungel47@gmail.com' || cleanId === 'navin_admin' || cleanId === 'admin@example.com') &&
+      (cleanPass === 'N@bin2047' || cleanPass === 'Admin@12345');
+
+    if (isMatch) {
+      const adminData = {
+        id: 'admin-navin-1',
+        email: 'ndhungel47@gmail.com',
+        username: 'navin_admin',
+        name: 'Navin Dhungel',
+        role: 'superadmin'
+      };
+      const token = 'session-token-' + Date.now();
+      login(token, adminData);
+      toast.success('लगइन सफल भयो! स्वागत छ Navin Dhungel!');
+      navigate('/admin');
+    } else {
+      setErrorMsg('गलत इमेल वा पासवर्ड (Invalid credentials)।');
+      toast.error('गलत लगइन विवरण। कृपया पुनः प्रयास गर्नुहोस्।');
+    }
+
+    setLoading(false);
   };
 
   const handleUseDemo = () => {
-    setIdentifier('admin@example.com');
-    setPassword('Admin@12345');
-    toast.info('Loaded demo administrator credentials.');
+    setIdentifier('ndhungel47@gmail.com');
+    setPassword('N@bin2047');
+    toast.info('Loaded administrator credentials.');
   };
 
   return (

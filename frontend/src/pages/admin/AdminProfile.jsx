@@ -2,39 +2,15 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../../contexts/AuthContext';
 import { useToast } from '../../contexts/ToastContext';
 import { Save, Plus, Trash2, Globe, Sparkles } from 'lucide-react';
+import { initialProfile, initialSocialLinks } from '../../data/initialData';
 
 export default function AdminProfile() {
   const { authFetch } = useAuth();
   const toast = useToast();
 
-  const [profile, setProfile] = useState({
-    fullName: '',
-    fullNameNe: '',
-    professionalTitle: '',
-    professionalTitleNe: '',
-    tagline: '',
-    taglineNe: '',
-    shortBio: '',
-    shortBioNe: '',
-    detailedBio: '',
-    detailedBioNe: '',
-    journey: '',
-    journeyNe: '',
-    careerObjective: '',
-    careerObjectiveNe: '',
-    email: '',
-    phone: '',
-    location: '',
-    locationNe: '',
-    profilePhoto: '',
-    projectsCompleted: 0,
-    yearsExperience: 0,
-    trainingsCount: 0,
-    achievementsCount: 0
-  });
-
-  const [socialLinks, setSocialLinks] = useState([]);
-  const [loading, setLoading] = useState(true);
+  const [profile, setProfile] = useState(initialProfile);
+  const [socialLinks, setSocialLinks] = useState(initialSocialLinks);
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
 
   useEffect(() => {
